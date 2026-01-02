@@ -1,0 +1,79 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  padding: 20px;
+}
+
+.pos {
+  background: white;
+  padding: 15px;
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+
+.pos label {
+  display: block;
+  margin-top: 8px;
+}
+
+.pos input, .pos select {
+  width: 100%;
+  padding: 5px;
+}
+
+.pos button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* TIKET */
+.ticket {
+  display: none;
+  width: 58mm;
+  background: white;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.ticket h3 {
+  text-align: center;
+  margin: 0;
+}
+
+.ticket hr {
+  border: none;
+  border-top: 1px dashed black;
+}
+
+#qrcode {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.footer {
+  text-align: center;
+  font-size: 10px;
+}
+
+/* PRINT MODE */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .ticket, .ticket * {
+    visibility: visible;
+  }
+
+  .ticket {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
