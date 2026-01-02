@@ -922,7 +922,7 @@
     qrContainer.innerHTML = '';
 
     const verificationUrl =
-        `/simulasi-verifikasi.html?code=${encodeURIComponent(ticketCode)}&order=${encodeURIComponent(orderId)}`;
+        `https://pos-bus.vercel.app/simulasi-verifikasi.html?code=${encodeURIComponent(ticketCode)}&order=${encodeURIComponent(orderId)}`;
 
     new QRCode(qrContainer, {
         text: verificationUrl,
