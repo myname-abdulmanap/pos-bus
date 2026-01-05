@@ -725,7 +725,7 @@
 
         async function createCashiPayment(orderId, amount, customerName, customerPhone, customerEmail) {
             try {
-                const response = await fetch(`${CASHI_CONFIG.apiUrl}`, {
+                const response = await fetch(`${CASHI_CONFIG.apiUrl}/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
