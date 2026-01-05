@@ -28,8 +28,8 @@ export default async function handler(req, res) {
     }
 
     // Call Cashi API to check payment status
-    // GANTI API KEY DI BAWAH INI
-    const response = await fetch(`https://cashi.id/api/order/check/${order_id}`, {
+    // Endpoint yang benar: https://cashi.id/api/check-status/:orderId
+    const response = await fetch(`https://cashi.id/api/check-status/${order_id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
