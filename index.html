@@ -183,6 +183,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            min-height: 220px;
         }
 
         .payment-info {
@@ -312,6 +313,17 @@
             0% { transform: scale(0); opacity: 0; }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); opacity: 1; }
+        }
+
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 13px;
+            text-align: left;
         }
 
         .ticket-container {
@@ -646,12 +658,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         // ============================================
-        // KONFIGURASI CASHI PAYMENT GATEWAY
+        // KONFIGURASI API - GUNAKAN PROXY VERCEL
         // ============================================
-        const CASHI_CONFIG = {
-            apiKey: 'CASHI-EOHPDT0ETJI', // Ganti dengan X-API-KEY Anda
-            apiUrl: 'https://cashi.id/api/create-order', // Base URL Cashi
-            webhookSecret: 'sk_84f850e7e2e1723ad888cf4fcef78a5e' // Untuk validasi webhook
+        const API_CONFIG = {
+            createPaymentUrl: '/api/create-payment',
+            checkPaymentUrl: '/api/check-payment'
         };
 
         let currentOrderId = '';
@@ -713,23 +724,24 @@
             };
             
             try {
-                // Buat transaksi pembayaran melalui Cashi
-                await createCashiPayment(orderId, amount, passenger, phone, email);
+                await createPayment(orderId, amount, passenger, phone, email);
             } catch (error) {
                 console.error('Payment creation error:', error);
-                alert('Gagal membuat pembayaran. Silakan coba lagi.');
+                const errorMsg = error.message || 'Gagal membuat pembayaran';
+                showError(errorMsg);
                 btnPayment.disabled = false;
                 btnPayment.innerHTML = originalText;
             }
         });
 
-        async function createCashiPayment(orderId, amount, customerName, customerPhone, customerEmail) {
+        async function createPayment(orderId, amount, customerName, customerPhone, customerEmail) {
             try {
-                const response = await fetch(CASHI_CONFIG.apiUrl, {
+                console.log('🔄 Creating payment via Vercel proxy...');
+                
+                const response = await fetch(API_CONFIG.createPaymentUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-KEY': CASHI_CONFIG.apiKey
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         order_id: orderId,
@@ -737,28 +749,18 @@
                     })
                 });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('API Error:', errorData);
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                }
-
                 const data = await response.json();
-                console.log('Payment created:', data);
-                
-                // Cek struktur response Cashi
-                if (!data.success) {
-                    throw new Error(data.message || 'Failed to create payment');
+                console.log('📦 Response:', data);
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || `HTTP error! status: ${response.status}`);
                 }
                 
-                // Tampilkan modal dengan QRIS dari Cashi
                 showPaymentModal(orderId, amount, data);
-                
-                // Mulai polling status pembayaran
                 startPaymentStatusCheck(orderId);
                 
             } catch (error) {
-                console.error('Error creating payment:', error);
+                console.error('❌ Error creating payment:', error);
                 throw error;
             }
         }
@@ -770,11 +772,9 @@
             const qrContainer = document.getElementById('qrPayment');
             qrContainer.innerHTML = '';
             
-            console.log('Payment Data:', paymentData);
+            console.log('🎨 Rendering QR Code...', paymentData);
             
-            // Cashi response: { success, order_id, amount, checkout_url, qrUrl }
             if (paymentData.qrUrl) {
-                // qrUrl adalah data:image/png;base64,... atau URL gambar
                 const img = document.createElement('img');
                 img.src = paymentData.qrUrl;
                 img.style.width = '180px';
@@ -782,22 +782,21 @@
                 img.style.display = 'block';
                 img.style.margin = '0 auto';
                 img.onerror = function() {
-                    console.error('Failed to load QR image');
+                    console.error('❌ Failed to load QR image');
                     qrContainer.innerHTML = '<p style="color: red; font-size: 13px;">Gagal memuat QR Code</p>';
                 };
                 qrContainer.appendChild(img);
-                console.log('✅ QR Code loaded from qrUrl');
+                console.log('✅ QR Code image added');
             } else if (paymentData.checkout_url) {
-                // Jika hanya ada checkout_url, tampilkan button untuk redirect
                 const btn = document.createElement('a');
                 btn.href = paymentData.checkout_url;
                 btn.target = '_blank';
                 btn.style.cssText = 'display: inline-block; padding: 12px 24px; background: #1a1d1f; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;';
                 btn.textContent = 'Buka Halaman Pembayaran';
                 qrContainer.appendChild(btn);
-                console.log('🔗 Checkout URL:', paymentData.checkout_url);
+                console.log('🔗 Checkout button added');
             } else {
-                console.error('No QR data found in response:', paymentData);
+                console.error('❌ No QR data found:', paymentData);
                 qrContainer.innerHTML = '<p style="color: red; font-size: 13px;">QR Code tidak tersedia</p>';
             }
             
@@ -807,17 +806,18 @@
             
             document.getElementById('paymentModal').classList.add('active');
             
-            // Reset tombol submit
             const btnPayment = document.getElementById('btnPayment');
             btnPayment.disabled = false;
             btnPayment.innerHTML = 'Beli Tiket';
         }
 
         function startPaymentStatusCheck(orderId) {
-            // Cek status pembayaran setiap 3 detik
+            console.log('🔄 Starting payment status check...');
+            
             paymentCheckInterval = setInterval(async () => {
                 try {
                     const status = await checkPaymentStatus(orderId);
+                    console.log('📊 Payment status:', status);
                     
                     if (status === 'paid' || status === 'success' || status === 'SETTLED') {
                         clearInterval(paymentCheckInterval);
@@ -840,72 +840,17 @@
                         statusDiv.className = 'status error';
                     }
                 } catch (error) {
-                    console.error('Error checking payment status:', error);
+                    console.error('❌ Error checking payment status:', error);
                 }
             }, 3000);
         }
 
-        // Listen untuk webhook broadcast
-        if ('BroadcastChannel' in window) {
-            const channel = new BroadcastChannel('payment_updates');
-            channel.addEventListener('message', (event) => {
-                console.log('📡 Broadcast received:', event.data);
-                
-                if (event.data.type === 'payment_success' && event.data.order_id === currentOrderId) {
-                    // Stop polling
-                    if (paymentCheckInterval) {
-                        clearInterval(paymentCheckInterval);
-                        paymentCheckInterval = null;
-                    }
-                    
-                    // Update UI
-                    const statusDiv = document.getElementById('paymentStatus');
-                    statusDiv.innerHTML = '✓ Pembayaran berhasil!';
-                    statusDiv.className = 'status success';
-                    
-                    setTimeout(() => {
-                        closePaymentModal();
-                        showSuccessModal();
-                    }, 1500);
-                }
-            });
-        }
-
-        // Fallback: Listen localStorage changes
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'last_payment_event') {
-                try {
-                    const eventData = JSON.parse(e.newValue);
-                    if (eventData.type === 'payment_success' && eventData.order_id === currentOrderId) {
-                        // Stop polling
-                        if (paymentCheckInterval) {
-                            clearInterval(paymentCheckInterval);
-                            paymentCheckInterval = null;
-                        }
-                        
-                        // Update UI
-                        const statusDiv = document.getElementById('paymentStatus');
-                        statusDiv.innerHTML = '✓ Pembayaran berhasil!';
-                        statusDiv.className = 'status success';
-                        
-                        setTimeout(() => {
-                            closePaymentModal();
-                            showSuccessModal();
-                        }, 1500);
-                    }
-                } catch (error) {
-                    console.error('Error parsing storage event:', error);
-                }
-            }
-        });
-
         async function checkPaymentStatus(orderId) {
             try {
-                const response = await fetch(`${CASHI_CONFIG.apiUrl}/order/check/${orderId}`, {
+                const response = await fetch(`${API_CONFIG.checkPaymentUrl}?order_id=${orderId}`, {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-KEY': CASHI_CONFIG.apiKey
+                        'Content-Type': 'application/json'
                     }
                 });
 
@@ -915,15 +860,13 @@
                 }
 
                 const data = await response.json();
-                console.log('Payment status:', data);
                 
                 if (!data.success) {
                     console.error('Status check error:', data.message);
                     return 'pending';
                 }
                 
-                // Cashi status: pending, paid, expired, failed
-                return data.data.status || 'pending';
+                return data.data?.status || 'pending';
                 
             } catch (error) {
                 console.error('Error checking payment status:', error);
@@ -931,12 +874,22 @@
             }
         }
 
+        function showError(message) {
+            const qrContainer = document.getElementById('qrPayment');
+            qrContainer.innerHTML = `
+                <div class="error-message">
+                    <strong>Error:</strong> ${message}
+                    <br><br>
+                    <small>Silakan cek console browser untuk detail lebih lanjut (F12)</small>
+                </div>
+            `;
+        }
+
         function closePaymentModal() {
             if (paymentCheckInterval) {
                 clearInterval(paymentCheckInterval);
                 paymentCheckInterval = null;
             }
-            
             document.getElementById('paymentModal').classList.remove('active');
         }
 
