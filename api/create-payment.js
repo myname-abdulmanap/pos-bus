@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': process.env.CASHI_API_KEY // Set ini di Vercel Environment Variables
+        'X-API-KEY': 'CASHI-EOHPDT0ETJI' // Set ini di Vercel Environment Variables
       },
       body: JSON.stringify({
         order_id,
