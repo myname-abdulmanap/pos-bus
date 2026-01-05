@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abdul Travel - POS Tiket Bus</title>
+    <title>Qualita Travel - POS Tiket Bus</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -12,7 +12,6 @@
             box-sizing: border-box;
         }
 
-        
         body {
             font-family: 'Inter', sans-serif;
             background: #f5f7fa;
@@ -35,64 +34,51 @@
 
         .header {
             background: linear-gradient(135deg, #1a1d1f 0%, #2d3135 100%);
-            padding: 32px 28px 28px 28px;
+            padding: 20px 20px 18px;
             text-align: center;
             position: relative;
             border-bottom: 4px solid #f5f7fa;
         }
 
-        /* .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #12b76a 0%, #1a1d1f 50%, #12b76a 100%);
-        } */
-
         .header h1 {
             color: white;
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
         .header p {
             color: #e0e0e0;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             margin-bottom: 4px;
         }
 
         .header .address {
             color: #b0b0b0;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 400;
-            margin-top: 8px;
-            padding-top: 12px;
+            margin-top: 6px;
+            padding-top: 8px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-
-        
-
         .form-container {
-            padding: 28px;
+            padding: 20px;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: #1a1d1f;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .form-group input,
@@ -153,7 +139,6 @@
             transform: none;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -194,6 +179,10 @@
             padding: 20px;
             border-radius: 16px;
             margin: 16px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .payment-info {
@@ -238,6 +227,11 @@
             color: #027a48;
         }
 
+        .status.error {
+            background: #fee;
+            color: #c00;
+        }
+
         .modal-btns {
             display: flex;
             gap: 10px;
@@ -258,20 +252,6 @@
 
         .btn-modal:hover {
             transform: translateY(-1px);
-        }
-
-        .btn-confirm {
-            background: #1a1d1f;
-            color: white;
-        }
-
-        .btn-confirm:hover:not(:disabled) {
-            background: #2d3135;
-        }
-
-        .btn-confirm:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .btn-cancel {
@@ -334,7 +314,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Ticket */
         .ticket-container {
             display: none;
         }
@@ -457,55 +436,6 @@
                 margin: 0;
             }
         }
-
-
-
-        .header {
-    padding: 20px 20px 18px;
-}
-
-.header h1 {
-    font-size: 22px;
-    margin-bottom: 4px;
-}
-
-.header p {
-    font-size: 12px;
-}
-
-.header .address {
-    font-size: 10px;
-    margin-top: 6px;
-    padding-top: 8px;
-}
-
-.form-container {
-    padding: 20px;
-}
-
-.form-group {
-    margin-bottom: 12px;
-}
-
-.form-group label {
-    font-size: 12px;
-    margin-bottom: 6px;
-}
-
-
-.qris-box {
-    background: #f5f7fa;
-    padding: 20px;
-    border-radius: 16px;
-    margin: 16px 0;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-
     </style>
 </head>
 <body>
@@ -513,7 +443,7 @@
         <div class="header">
             <h1>Qualita Travel</h1>
             <p>Travel & Transport Service</p>
-            <p class="address">Jl. Raya Bandung No. 123, Indonesia</p>
+            <p class="address">Ruby commercial, Summarecon, Jl. Bulevar Selatan Blok TD No.19, Marga Mulya, Bekasi Utara, Kota Bekasi.</p>
         </div>
 
         <div class="form-container">
@@ -529,23 +459,19 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Email (Optional)</label>
+                    <input type="email" id="email" placeholder="email@example.com">
+                </div>
+
+                <div class="form-group">
                     <label>Rute Perjalanan</label>
                     <select id="route" required>
-    <option value="">Pilih Rute...</option>
-    <option value="Jakarta - Bandung" data-price="2000">
-        Jakarta - Bandung (Rp 2.000)
-    </option>
-    <option value="Jakarta - Semarang" data-price="3000">
-        Jakarta - Semarang (Rp 3.000)
-    </option>
-    <option value="Bandung - Yogyakarta" data-price="4000">
-        Bandung - Yogyakarta (Rp 4.000)
-    </option>
-    <option value="Surabaya - Bali" data-price="5000">
-        Surabaya - Bali (Rp 5.000)
-    </option>
-</select>
-
+                        <option value="">Pilih Rute...</option>
+                        <option value="Jakarta - Bandung" data-price="2000">Jakarta - Bandung (Rp 2.000)</option>
+                        <option value="Jakarta - Semarang" data-price="2500">Jakarta - Semarang (Rp 2.500)</option>
+                        <option value="Bandung - Yogyakarta" data-price="3000">Bandung - Yogyakarta (Rp 3.000)</option>
+                        <option value="Surabaya - Bali" data-price="3500">Surabaya - Bali (Rp 3.500)</option>
+                    </select>
                 </div>
 
                 <div class="form-row">
@@ -582,7 +508,6 @@
                             <option value="A4">A4</option>
                             <option value="B1">B1</option>
                             <option value="B2">B2</option>
-                           
                         </select>
                     </div>
 
@@ -609,14 +534,13 @@
             </div>
             <div class="qris-box">
                 <div id="qrPayment"></div>
-                <p style="margin-top: 12px; color: #6f767e; font-size: 12px; font-weight: 500;">Scan untuk melanjutkan pembayaran</p>
+                <p style="margin-top: 12px; color: #6f767e; font-size: 12px; font-weight: 500;">Scan QRIS untuk melakukan pembayaran</p>
             </div>
             <div class="status" id="paymentStatus">
                 <span class="loading"></span>Menunggu pembayaran...
             </div>
             <div class="modal-btns">
                 <button class="btn-modal btn-cancel" onclick="closePaymentModal()">Batal</button>
-                <button class="btn-modal btn-confirm" id="btnConfirmPayment" onclick="confirmPayment()">(Simulasi) Bayar QRIS</button>
             </div>
         </div>
     </div>
@@ -645,7 +569,7 @@
             <div class="ticket-header">
                 <h2>QUALITA TRAVEL</h2>
                 <p>Travel & Transport Service</p>
-                <p style="font-size: 9px; margin-top: 3px;">Jl. Raya Bandung No. 123</p>
+                <p style="font-size: 9px; margin-top: 3px;">Ruby commercial, Summarecon, Jl. Bulevar Selatan Blok TD No.19, Marga Mulya, Bekasi Utara, Kota Bekasi.</p>
             </div>
 
             <div class="ticket-divider"></div>
@@ -721,10 +645,19 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
+        // ============================================
+        // KONFIGURASI CASHI PAYMENT GATEWAY
+        // ============================================
+        const CASHI_CONFIG = {
+            apiKey: 'CASHI-EOHPDT0ETJI', // Ganti dengan X-API-KEY Anda
+            apiUrl: 'https://cashi.id/api/create-order', // Base URL Cashi
+            webhookSecret: 'sk_84f850e7e2e1723ad888cf4fcef78a5e' // Untuk validasi webhook
+        };
+
         let currentOrderId = '';
         let currentTicketData = {};
         let currentTicketCode = '';
-        let paymentTimer = null;
+        let paymentCheckInterval = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             const dateInput = document.getElementById('date');
@@ -746,7 +679,7 @@
             });
         });
 
-        document.getElementById('ticketForm').addEventListener('submit', function(e) {
+        document.getElementById('ticketForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const btnPayment = document.getElementById('btnPayment');
@@ -757,6 +690,7 @@
             
             const passenger = document.getElementById('passenger').value;
             const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
             const route = document.getElementById('route').value;
             const date = document.getElementById('date').value;
             const time = document.getElementById('time').value;
@@ -770,6 +704,7 @@
             currentTicketData = {
                 passenger,
                 phone,
+                email,
                 route,
                 date,
                 time,
@@ -777,85 +712,232 @@
                 amount
             };
             
-            setTimeout(() => {
+            try {
+                // Buat transaksi pembayaran melalui Cashi
+                await createCashiPayment(orderId, amount, passenger, phone, email);
+            } catch (error) {
+                console.error('Payment creation error:', error);
+                alert('Gagal membuat pembayaran. Silakan coba lagi.');
                 btnPayment.disabled = false;
                 btnPayment.innerHTML = originalText;
-                showPaymentModal(orderId, amount);
-            }, 800);
+            }
         });
 
-        function generateOrderId() {
-            const date = new Date();
-            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-            const dateStr = date.getDate().toString().padStart(2, '0') + 
-                           (date.getMonth() + 1).toString().padStart(2, '0');
-            return `BUS${dateStr}${random}`;
+        async function createCashiPayment(orderId, amount, customerName, customerPhone, customerEmail) {
+            try {
+                const response = await fetch(CASHI_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-KEY': CASHI_CONFIG.apiKey
+                    },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        amount: amount
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('API Error:', errorData);
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Payment created:', data);
+                
+                // Cek struktur response Cashi
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to create payment');
+                }
+                
+                // Tampilkan modal dengan QRIS dari Cashi
+                showPaymentModal(orderId, amount, data);
+                
+                // Mulai polling status pembayaran
+                startPaymentStatusCheck(orderId);
+                
+            } catch (error) {
+                console.error('Error creating payment:', error);
+                throw error;
+            }
         }
 
-        function showPaymentModal(orderId, amount) {
+        function showPaymentModal(orderId, amount, paymentData) {
             document.getElementById('modalOrderId').textContent = orderId;
             document.getElementById('modalAmount').textContent = formatCurrency(amount);
             
             const qrContainer = document.getElementById('qrPayment');
             qrContainer.innerHTML = '';
             
-            const qrData = `${orderId}|${amount}|ABDUL_TRAVEL`;
-            new QRCode(qrContainer, {
-                text: qrData,
-                width: 180,
-                height: 180,
-                colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            console.log('Payment Data:', paymentData);
+            
+            // Cashi response: { success, order_id, amount, checkout_url, qrUrl }
+            if (paymentData.qrUrl) {
+                // qrUrl adalah data:image/png;base64,... atau URL gambar
+                const img = document.createElement('img');
+                img.src = paymentData.qrUrl;
+                img.style.width = '180px';
+                img.style.height = '180px';
+                img.style.display = 'block';
+                img.style.margin = '0 auto';
+                img.onerror = function() {
+                    console.error('Failed to load QR image');
+                    qrContainer.innerHTML = '<p style="color: red; font-size: 13px;">Gagal memuat QR Code</p>';
+                };
+                qrContainer.appendChild(img);
+                console.log('✅ QR Code loaded from qrUrl');
+            } else if (paymentData.checkout_url) {
+                // Jika hanya ada checkout_url, tampilkan button untuk redirect
+                const btn = document.createElement('a');
+                btn.href = paymentData.checkout_url;
+                btn.target = '_blank';
+                btn.style.cssText = 'display: inline-block; padding: 12px 24px; background: #1a1d1f; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;';
+                btn.textContent = 'Buka Halaman Pembayaran';
+                qrContainer.appendChild(btn);
+                console.log('🔗 Checkout URL:', paymentData.checkout_url);
+            } else {
+                console.error('No QR data found in response:', paymentData);
+                qrContainer.innerHTML = '<p style="color: red; font-size: 13px;">QR Code tidak tersedia</p>';
+            }
             
             const statusDiv = document.getElementById('paymentStatus');
             statusDiv.innerHTML = '<span class="loading"></span>Menunggu pembayaran...';
             statusDiv.className = 'status';
             
-            const btnConfirm = document.getElementById('btnConfirmPayment');
-            btnConfirm.disabled = false;
-            btnConfirm.innerHTML = '(Simulasi) Bayar QRIS';
-            
             document.getElementById('paymentModal').classList.add('active');
+            
+            // Reset tombol submit
+            const btnPayment = document.getElementById('btnPayment');
+            btnPayment.disabled = false;
+            btnPayment.innerHTML = 'Beli Tiket';
+        }
+
+        function startPaymentStatusCheck(orderId) {
+            // Cek status pembayaran setiap 3 detik
+            paymentCheckInterval = setInterval(async () => {
+                try {
+                    const status = await checkPaymentStatus(orderId);
+                    
+                    if (status === 'paid' || status === 'success' || status === 'SETTLED') {
+                        clearInterval(paymentCheckInterval);
+                        paymentCheckInterval = null;
+                        
+                        const statusDiv = document.getElementById('paymentStatus');
+                        statusDiv.innerHTML = '✓ Pembayaran berhasil!';
+                        statusDiv.className = 'status success';
+                        
+                        setTimeout(() => {
+                            closePaymentModal();
+                            showSuccessModal();
+                        }, 1500);
+                    } else if (status === 'failed' || status === 'expired') {
+                        clearInterval(paymentCheckInterval);
+                        paymentCheckInterval = null;
+                        
+                        const statusDiv = document.getElementById('paymentStatus');
+                        statusDiv.innerHTML = '✗ Pembayaran gagal atau kadaluarsa';
+                        statusDiv.className = 'status error';
+                    }
+                } catch (error) {
+                    console.error('Error checking payment status:', error);
+                }
+            }, 3000);
+        }
+
+        // Listen untuk webhook broadcast
+        if ('BroadcastChannel' in window) {
+            const channel = new BroadcastChannel('payment_updates');
+            channel.addEventListener('message', (event) => {
+                console.log('📡 Broadcast received:', event.data);
+                
+                if (event.data.type === 'payment_success' && event.data.order_id === currentOrderId) {
+                    // Stop polling
+                    if (paymentCheckInterval) {
+                        clearInterval(paymentCheckInterval);
+                        paymentCheckInterval = null;
+                    }
+                    
+                    // Update UI
+                    const statusDiv = document.getElementById('paymentStatus');
+                    statusDiv.innerHTML = '✓ Pembayaran berhasil!';
+                    statusDiv.className = 'status success';
+                    
+                    setTimeout(() => {
+                        closePaymentModal();
+                        showSuccessModal();
+                    }, 1500);
+                }
+            });
+        }
+
+        // Fallback: Listen localStorage changes
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'last_payment_event') {
+                try {
+                    const eventData = JSON.parse(e.newValue);
+                    if (eventData.type === 'payment_success' && eventData.order_id === currentOrderId) {
+                        // Stop polling
+                        if (paymentCheckInterval) {
+                            clearInterval(paymentCheckInterval);
+                            paymentCheckInterval = null;
+                        }
+                        
+                        // Update UI
+                        const statusDiv = document.getElementById('paymentStatus');
+                        statusDiv.innerHTML = '✓ Pembayaran berhasil!';
+                        statusDiv.className = 'status success';
+                        
+                        setTimeout(() => {
+                            closePaymentModal();
+                            showSuccessModal();
+                        }, 1500);
+                    }
+                } catch (error) {
+                    console.error('Error parsing storage event:', error);
+                }
+            }
+        });
+
+        async function checkPaymentStatus(orderId) {
+            try {
+                const response = await fetch(`${CASHI_CONFIG.apiUrl}/order/check/${orderId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-KEY': CASHI_CONFIG.apiKey
+                    }
+                });
+
+                if (!response.ok) {
+                    console.error(`Status check failed: ${response.status}`);
+                    return 'pending';
+                }
+
+                const data = await response.json();
+                console.log('Payment status:', data);
+                
+                if (!data.success) {
+                    console.error('Status check error:', data.message);
+                    return 'pending';
+                }
+                
+                // Cashi status: pending, paid, expired, failed
+                return data.data.status || 'pending';
+                
+            } catch (error) {
+                console.error('Error checking payment status:', error);
+                return 'pending';
+            }
         }
 
         function closePaymentModal() {
-            if (paymentTimer) {
-                clearTimeout(paymentTimer);
-                paymentTimer = null;
+            if (paymentCheckInterval) {
+                clearInterval(paymentCheckInterval);
+                paymentCheckInterval = null;
             }
-            
-            const btnConfirm = document.getElementById('btnConfirmPayment');
-            btnConfirm.disabled = false;
-            btnConfirm.innerHTML = '(Simulasi) Bayar QRIS';
             
             document.getElementById('paymentModal').classList.remove('active');
-        }
-
-        function confirmPayment() {
-            const btnConfirm = document.getElementById('btnConfirmPayment');
-            const statusDiv = document.getElementById('paymentStatus');
-            
-            btnConfirm.disabled = true;
-            btnConfirm.innerHTML = '<span class="loading"></span>Memverifikasi...';
-            
-            statusDiv.innerHTML = '<span class="loading"></span>Memverifikasi pembayaran...';
-            
-            if (paymentTimer) {
-                clearTimeout(paymentTimer);
-            }
-            
-            paymentTimer = setTimeout(() => {
-                statusDiv.innerHTML = '✓ Pembayaran terverifikasi';
-                statusDiv.className = 'status success';
-                
-                setTimeout(() => {
-                    closePaymentModal();
-                    showSuccessModal();
-                    paymentTimer = null;
-                }, 1000);
-            }, 2000);
         }
 
         function showSuccessModal() {
@@ -903,6 +985,14 @@
             }, 500);
         }
 
+        function generateOrderId() {
+            const date = new Date();
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            const dateStr = date.getDate().toString().padStart(2, '0') + 
+                           (date.getMonth() + 1).toString().padStart(2, '0');
+            return `BUS${dateStr}${random}`;
+        }
+
         function generateTicketCode() {
             const prefix = 'TKT';
             const timestamp = Date.now().toString().slice(-8);
@@ -928,24 +1018,21 @@
             return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
         }
 
-
         function generateTicketQRCode(ticketCode, orderId) {
-    const qrContainer = document.getElementById('qrcode');
-    qrContainer.innerHTML = '';
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
 
-    const verificationUrl =
-        `https://pos-bus.vercel.app/simulasi-verifikasi.html?code=${encodeURIComponent(ticketCode)}&order=${encodeURIComponent(orderId)}`;
+            const verificationUrl = `${window.location.origin}/verify.html?code=${encodeURIComponent(ticketCode)}&order=${encodeURIComponent(orderId)}`;
 
-    new QRCode(qrContainer, {
-        text: verificationUrl,
-        width: 120,
-        height: 120,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-    });
-}
-
-   </script>
+            new QRCode(qrContainer, {
+                text: verificationUrl,
+                width: 120,
+                height: 120,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+    </script>
 </body>
 </html>
