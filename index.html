@@ -819,7 +819,8 @@
                     const status = await checkPaymentStatus(orderId);
                     console.log('📊 Payment status:', status);
                     
-                    if (status === 'paid' || status === 'success' || status === 'SETTLED') {
+                    // Cashi menggunakan status: SETTLED, PENDING, FAILED, EXPIRED
+                    if (status === 'settled' || status === 'paid' || status === 'success') {
                         clearInterval(paymentCheckInterval);
                         paymentCheckInterval = null;
                         
@@ -860,13 +861,19 @@
                 }
 
                 const data = await response.json();
+                console.log('📦 Full check status response:', data);
                 
                 if (!data.success) {
                     console.error('Status check error:', data.message);
                     return 'pending';
                 }
                 
-                return data.data?.status || 'pending';
+                // Cashi bisa return format: data.status, data.data.status, atau data.paymentStatus
+                const status = data.status || data.data?.status || data.paymentStatus || 'pending';
+                console.log('✅ Extracted status:', status);
+                
+                // Normalize status ke lowercase untuk comparison
+                return status.toLowerCase();
                 
             } catch (error) {
                 console.error('Error checking payment status:', error);
