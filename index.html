@@ -443,7 +443,7 @@
         <div class="header">
             <h1>Qualita Travel</h1>
             <p>Travel & Transport Service</p>
-            <p class="address">Ruby commercial, Summarecon, Jl. Bulevar Selatan Blok TD No.19, Marga Mulya, Bekasi Utara, Kota Bekasi.</p>
+            <p class="address">Jl. Raya Bandung No. 123, Indonesia</p>
         </div>
 
         <div class="form-container">
@@ -467,10 +467,10 @@
                     <label>Rute Perjalanan</label>
                     <select id="route" required>
                         <option value="">Pilih Rute...</option>
-                        <option value="Jakarta - Bandung" data-price="2500">Jakarta - Bandung (Rp 2500)</option>
-                        <option value="Jakarta - Semarang" data-price="2000">Jakarta - Semarang (Rp 2000)</option>
-                        <option value="Bandung - Yogyakarta" data-price="25000">Bandung - Yogyakarta (Rp 25.000)</option>
-                        <option value="Surabaya - Bali" data-price="3000">Surabaya - Bali (Rp 3.000)</option>
+                        <option value="Jakarta - Bandung" data-price="150000">Jakarta - Bandung (Rp 150.000)</option>
+                        <option value="Jakarta - Semarang" data-price="200000">Jakarta - Semarang (Rp 200.000)</option>
+                        <option value="Bandung - Yogyakarta" data-price="250000">Bandung - Yogyakarta (Rp 250.000)</option>
+                        <option value="Surabaya - Bali" data-price="300000">Surabaya - Bali (Rp 300.000)</option>
                     </select>
                 </div>
 
@@ -569,7 +569,7 @@
             <div class="ticket-header">
                 <h2>QUALITA TRAVEL</h2>
                 <p>Travel & Transport Service</p>
-                <p style="font-size: 9px; margin-top: 3px;">Ruby commercial, Summarecon, Jl. Bulevar Selatan Blok TD No.19, Marga Mulya, Bekasi Utara, Kota Bekasi.</p>
+                <p style="font-size: 9px; margin-top: 3px;">Jl. Raya Bandung No. 123</p>
             </div>
 
             <div class="ticket-divider"></div>
@@ -819,7 +819,7 @@
                 try {
                     const status = await checkPaymentStatus(orderId);
                     
-                    if (status === 'paid' || status === 'success') {
+                    if (status === 'paid' || status === 'success' || status === 'SETTLED') {
                         clearInterval(paymentCheckInterval);
                         paymentCheckInterval = null;
                         
@@ -844,6 +844,60 @@
                 }
             }, 3000);
         }
+
+        // Listen untuk webhook broadcast
+        if ('BroadcastChannel' in window) {
+            const channel = new BroadcastChannel('payment_updates');
+            channel.addEventListener('message', (event) => {
+                console.log('📡 Broadcast received:', event.data);
+                
+                if (event.data.type === 'payment_success' && event.data.order_id === currentOrderId) {
+                    // Stop polling
+                    if (paymentCheckInterval) {
+                        clearInterval(paymentCheckInterval);
+                        paymentCheckInterval = null;
+                    }
+                    
+                    // Update UI
+                    const statusDiv = document.getElementById('paymentStatus');
+                    statusDiv.innerHTML = '✓ Pembayaran berhasil!';
+                    statusDiv.className = 'status success';
+                    
+                    setTimeout(() => {
+                        closePaymentModal();
+                        showSuccessModal();
+                    }, 1500);
+                }
+            });
+        }
+
+        // Fallback: Listen localStorage changes
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'last_payment_event') {
+                try {
+                    const eventData = JSON.parse(e.newValue);
+                    if (eventData.type === 'payment_success' && eventData.order_id === currentOrderId) {
+                        // Stop polling
+                        if (paymentCheckInterval) {
+                            clearInterval(paymentCheckInterval);
+                            paymentCheckInterval = null;
+                        }
+                        
+                        // Update UI
+                        const statusDiv = document.getElementById('paymentStatus');
+                        statusDiv.innerHTML = '✓ Pembayaran berhasil!';
+                        statusDiv.className = 'status success';
+                        
+                        setTimeout(() => {
+                            closePaymentModal();
+                            showSuccessModal();
+                        }, 1500);
+                    }
+                } catch (error) {
+                    console.error('Error parsing storage event:', error);
+                }
+            }
+        });
 
         async function checkPaymentStatus(orderId) {
             try {
