@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran Berhasil - Qualita Travel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 48px 32px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pop 0.6s ease-out;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .success-icon::before {
+            content: "✓";
+            font-size: 48px;
+            color: white;
+            font-weight: bold;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        h1 {
+            color: #1a1d1f;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: #6f767e;
+            font-size: 15px;
+            margin-bottom: 32px;
+        }
+
+        .info-box {
+            background: #f5f7fa;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+            padding-top: 16px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .info-label {
+            color: #6f767e;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #1a1d1f;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: #ecfdf5;
+            color: #027a48;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 16px 0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: #1a1d1f;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2d3135;
+        }
+
+        .btn-secondary {
+            background: #f5f7fa;
+            color: #1a1d1f;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .footer-note {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #1a1d1f;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon"></div>
+        <h1>Pembayaran Berhasil!</h1>
+        <p class="subtitle">Transaksi Anda telah dikonfirmasi</p>
+        
+        <div class="status-badge">✓ LUNAS</div>
+
+        <div class="info-box">
+            <div class="info-row">
+                <span class="info-label">Order ID</span>
+                <span class="info-value" id="orderId">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Transaction ID</span>
+                <span class="info-value" id="transactionId">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Metode Pembayaran</span>
+                <span class="info-value">QRIS</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Waktu Pembayaran</span>
+                <span class="info-value" id="paymentTime">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Total Dibayar</span>
+                <span class="info-value" id="amount" style="font-size: 18px; color: #10b981;">-</span>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-secondary" onclick="backToHome()">
+                Kembali
+            </button>
+            <button class="btn btn-primary" onclick="printTicket()">
+                Cetak Tiket
+            </button>
+        </div>
+
+        <div class="footer-note">
+            <p>Email konfirmasi telah dikirim ke alamat email Anda.</p>
+            <p>Simpan bukti pembayaran ini untuk keperluan verifikasi.</p>
+        </div>
+    </div>
+
+    <script>
+        // Ambil data dari URL parameters
+        function loadPaymentData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            const orderId = urlParams.get('order_id') || '-';
+            const transactionId = urlParams.get('transaction_id') || '-';
+            const amount = urlParams.get('amount') || '0';
+            const timestamp = urlParams.get('timestamp');
+
+            document.getElementById('orderId').textContent = orderId;
+            document.getElementById('transactionId').textContent = transactionId;
+            document.getElementById('amount').textContent = formatCurrency(amount);
+            
+            if (timestamp) {
+                const date = new Date(parseInt(timestamp) * 1000);
+                document.getElementById('paymentTime').textContent = date.toLocaleString('id-ID');
+            } else {
+                document.getElementById('paymentTime').textContent = new Date().toLocaleString('id-ID');
+            }
+        }
+
+        function formatCurrency(amount) {
+            return 'Rp ' + parseInt(amount).toLocaleString('id-ID');
+        }
+
+        function backToHome() {
+            window.location.href = '/';
+        }
+
+        function printTicket() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('order_id');
+            
+            // Redirect ke halaman utama dengan parameter untuk print
+            window.location.href = `/?print=${orderId}`;
+        }
+
+        // Load data saat halaman dimuat
+        window.addEventListener('load', loadPaymentData);
+    </script>
+</body>
+</html>

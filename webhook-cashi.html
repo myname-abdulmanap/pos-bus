@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Handler - Cashi Payment</title>
+</head>
+<body>
+    <script>
+        // ============================================
+        // WEBHOOK HANDLER untuk Cashi Payment Gateway
+        // ============================================
+        // File ini dipanggil oleh Cashi ketika status pembayaran berubah
+        
+        const CASHI_WEBHOOK_SECRET = 'sk_84f850e7e2e1723ad888cf4fcef78a5e';
+
+        // Fungsi untuk memvalidasi signature webhook dari Cashi
+        async function validateWebhookSignature(payload, signature) {
+            // Implementasi validasi signature sesuai dokumentasi Cashi
+            // Biasanya menggunakan HMAC SHA256
+            try {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(JSON.stringify(payload) + CASHI_WEBHOOK_SECRET);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                
+                return hashHex === signature;
+            } catch (error) {
+                console.error('Signature validation error:', error);
+                return false;
+            }
+        }
+
+        // Handler untuk menerima webhook dari Cashi
+        async function handleWebhook() {
+            try {
+                // Dapatkan data dari query string atau POST body
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // Contoh struktur data webhook dari Cashi:
+                const webhookData = {
+                    order_id: urlParams.get('order_id'),
+                    status: urlParams.get('status'),
+                    amount: urlParams.get('amount'),
+                    payment_method: urlParams.get('payment_method'),
+                    transaction_id: urlParams.get('transaction_id'),
+                    timestamp: urlParams.get('timestamp'),
+                    signature: urlParams.get('signature')
+                };
+
+                console.log('Webhook received:', webhookData);
+
+                // Validasi signature (opsional tapi sangat direkomendasikan)
+                const isValid = await validateWebhookSignature(webhookData, webhookData.signature);
+                
+                if (!isValid && webhookData.signature) {
+                    console.error('Invalid webhook signature!');
+                    return;
+                }
+
+                // Proses berdasarkan status pembayaran
+                if (webhookData.status === 'paid' || webhookData.status === 'success') {
+                    // Pembayaran berhasil
+                    console.log('Payment SUCCESS for order:', webhookData.order_id);
+                    
+                    // Simpan ke localStorage atau database
+                    savePaymentSuccess(webhookData);
+                    
+                    // Kirim notifikasi atau update UI jika ada
+                    notifyPaymentSuccess(webhookData);
+                    
+                } else if (webhookData.status === 'failed') {
+                    // Pembayaran gagal
+                    console.log('Payment FAILED for order:', webhookData.order_id);
+                    savePaymentFailed(webhookData);
+                    
+                } else if (webhookData.status === 'expired') {
+                    // Pembayaran kadaluarsa
+                    console.log('Payment EXPIRED for order:', webhookData.order_id);
+                    savePaymentExpired(webhookData);
+                }
+
+                // Return success response ke Cashi
+                document.body.innerHTML = '<h1>Webhook Received</h1><p>Status: OK</p>';
+                
+            } catch (error) {
+                console.error('Webhook handling error:', error);
+                document.body.innerHTML = '<h1>Webhook Error</h1><p>Status: Error</p>';
+            }
+        }
+
+        function savePaymentSuccess(data) {
+            // Simpan data pembayaran sukses ke localStorage
+            const payments = JSON.parse(localStorage.getItem('successful_payments') || '[]');
+            payments.push({
+                ...data,
+                received_at: new Date().toISOString()
+            });
+            localStorage.setItem('successful_payments', JSON.stringify(payments));
+            
+            // Tandai order sebagai paid
+            localStorage.setItem(`payment_${data.order_id}`, 'paid');
+        }
+
+        function savePaymentFailed(data) {
+            localStorage.setItem(`payment_${data.order_id}`, 'failed');
+        }
+
+        function savePaymentExpired(data) {
+            localStorage.setItem(`payment_${data.order_id}`, 'expired');
+        }
+
+        function notifyPaymentSuccess(data) {
+            // Broadcast event untuk update UI di tab lain
+            if ('BroadcastChannel' in window) {
+                const channel = new BroadcastChannel('payment_updates');
+                channel.postMessage({
+                    type: 'payment_success',
+                    order_id: data.order_id,
+                    amount: data.amount
+                });
+            }
+        }
+
+        // Jalankan handler saat halaman dimuat
+        window.addEventListener('load', handleWebhook);
+    </script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran Gagal - Qualita Travel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 48px 32px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: shake 0.6s ease-out;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .error-icon::before {
+            content: "✕";
+            font-size: 48px;
+            color: white;
+            font-weight: bold;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        h1 {
+            color: #1a1d1f;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: #6f767e;
+            font-size: 15px;
+            margin-bottom: 32px;
+        }
+
+        .info-box {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: #6f767e;
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: #1a1d1f;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: #fef2f2;
+            color: #dc2626;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 16px 0;
+        }
+
+        .reason-box {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .reason-box h3 {
+            color: #92400e;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .reason-box ul {
+            color: #78350f;
+            font-size: 13px;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b91c1c;
+        }
+
+        .btn-secondary {
+            background: #f5f7fa;
+            color: #1a1d1f;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .footer-note {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .support-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .support-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon"></div>
+        <h1>Pembayaran Gagal</h1>
+        <p class="subtitle">Transaksi tidak dapat diproses</p>
+        
+        <div class="status-badge">✕ GAGAL</div>
+
+        <div class="info-box">
+            <div class="info-row">
+                <span class="info-label">Order ID</span>
+                <span class="info-value" id="orderId">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Status</span>
+                <span class="info-value" style="color: #dc2626;">Pembayaran Gagal</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Waktu</span>
+                <span class="info-value" id="failedTime">-</span>
+            </div>
+        </div>
+
+        <div class="reason-box">
+            <h3>⚠️ Kemungkinan Penyebab:</h3>
+            <ul>
+                <li>Waktu pembayaran habis (expired)</li>
+                <li>Pembayaran dibatalkan oleh pengguna</li>
+                <li>Saldo tidak mencukupi</li>
+                <li>Gangguan pada sistem pembayaran</li>
+                <li>Koneksi internet terputus</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-secondary" onclick="backToHome()">
+                Kembali ke Beranda
+            </button>
+            <button class="btn btn-primary" onclick="retryPayment()">
+                Coba Lagi
+            </button>
+        </div>
+
+        <div class="footer-note">
+            <p>Dana Anda tidak akan dipotong karena transaksi gagal.</p>
+            <p>Jika terus mengalami masalah, silakan hubungi 
+                <a href="#" class="support-link">Customer Support</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Ambil data dari URL parameters
+        function loadFailedData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            const orderId = urlParams.get('order_id') || '-';
+            const timestamp = urlParams.get('timestamp');
+
+            document.getElementById('orderId').textContent = orderId;
+            
+            if (timestamp) {
+                const date = new Date(parseInt(timestamp) * 1000);
+                document.getElementById('failedTime').textContent = date.toLocaleString('id-ID');
+            } else {
+                document.getElementById('failedTime').textContent = new Date().toLocaleString('id-ID');
+            }
+        }
+
+        function backToHome() {
+            window.location.href = '/';
+        }
+
+        function retryPayment() {
+            // Kembali ke halaman utama untuk melakukan pembelian ulang
+            window.location.href = '/';
+        }
+
+        // Load data saat halaman dimuat
+        window.addEventListener('load', loadFailedData);
+    </script>
+</body>
+</html>
